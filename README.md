@@ -2,7 +2,7 @@
 ## Overview
 Web service for transferring coins between accounts
 
-## Requierements
+## Requirements
 * Python 3.6
 
 ## Install
