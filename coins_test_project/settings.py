@@ -14,6 +14,7 @@ import os
 import environ
 
 BASE_DIR = environ.Path(__file__) - 2
+print(BASE_DIR)
 
 env = environ.Env(
     DEBUG=(bool, False),
@@ -55,7 +56,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'coins_test_project.urls'
 
 TEMPLATES = [
     {
@@ -73,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'wsgi.application'
+WSGI_APPLICATION = 'coins_test_project.wsgi.application'
 
 
 # Database
