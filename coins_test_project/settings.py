@@ -14,7 +14,6 @@ import os
 import environ
 
 BASE_DIR = environ.Path(__file__) - 2
-print(BASE_DIR)
 
 env = environ.Env(
     DEBUG=(bool, False),
