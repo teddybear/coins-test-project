@@ -1,4 +1,4 @@
-from django.urls import reverse
+from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 from accounts.models import Account
@@ -21,15 +21,16 @@ class TestPayments(APITestCase):
         self.bob_account = Account.objects.create(
             owner=bob, id="bob456", currency="PHP", balance=1000)
 
+        self.url = reverse("api:payments:payments")
+
     def test_payment(self):
         """Test case successful payment"""
-        url = reverse("payments:payments")
         data = {
             "from_account": self.alice_account.id,
             "to_account": self.bob_account.id,
             "amount": 100
         }
-        resp = self.client.post(url, data=data, format="json")
+        resp = self.client.post(self.url, data=data, format="json")
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         data = resp.data
         self.assertIn("status", data)
@@ -44,13 +45,12 @@ class TestPayments(APITestCase):
 
     def test_payment_account_not_exist(self):
         """Test case nonexistant account payment"""
-        url = reverse("payments:payments")
         data = {
             "from_account": "nonex",
             "to_account": self.bob_account.id,
             "amount": 100
         }
-        resp = self.client.post(url, data=data, format="json")
+        resp = self.client.post(self.url, data=data, format="json")
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         resp_data = resp.data
         self.assertIn("non_field_errors", resp_data)
@@ -61,7 +61,7 @@ class TestPayments(APITestCase):
         data["from_account"] = self.alice_account.id
         data["to_account"] = "nonex"
 
-        resp = self.client.post(url, data=data, format="json")
+        resp = self.client.post(self.url, data=data, format="json")
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         resp_data = resp.data
         self.assertIn("non_field_errors", resp_data)
@@ -71,13 +71,12 @@ class TestPayments(APITestCase):
 
     def test_payment_same_account(self):
         """Test case same account payment"""
-        url = reverse("payments:payments")
         data = {
             "from_account": self.bob_account.id,
             "to_account": self.bob_account.id,
             "amount": 100
         }
-        resp = self.client.post(url, data=data, format="json")
+        resp = self.client.post(self.url, data=data, format="json")
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         resp_data = resp.data
         self.assertIn("non_field_errors", resp_data)
@@ -87,13 +86,12 @@ class TestPayments(APITestCase):
 
     def test_payment_neg_amount(self):
         """Test case payment with negative amount"""
-        url = reverse("payments:payments")
         data = {
             "from_account": self.bob_account.id,
             "to_account": self.bob_account.id,
             "amount": -100
         }
-        resp = self.client.post(url, data=data, format="json")
+        resp = self.client.post(self.url, data=data, format="json")
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         resp_data = resp.data
         self.assertIn("non_field_errors", resp_data)
@@ -103,7 +101,6 @@ class TestPayments(APITestCase):
 
     def test_payment_different_currency(self):
         """Test case payment with different currencies on accounts"""
-        url = reverse("payments:payments")
         self.bob_account.currency = "USD"
         self.bob_account.save()
         data = {
@@ -111,7 +108,7 @@ class TestPayments(APITestCase):
             "to_account": self.bob_account.id,
             "amount": 100
         }
-        resp = self.client.post(url, data=data, format="json")
+        resp = self.client.post(self.url, data=data, format="json")
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         resp_data = resp.data
         self.assertIn("non_field_errors", resp_data)

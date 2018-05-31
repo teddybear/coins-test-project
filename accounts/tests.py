@@ -1,4 +1,4 @@
-from django.urls import reverse
+from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 from accounts.models import Account
@@ -20,9 +20,10 @@ class TestAccounts(APITestCase):
         bob_account = Account.objects.create(
             owner=bob, id="bob456", currency="PHP", balance=1000)
 
+        self.url = reverse("api:accounts:account-list")
+
     def test_list(self):
-        url = reverse("accounts:account-list")
-        resp = self.client.get(url)
+        resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.data
         self.assertIn("accounts", data)
