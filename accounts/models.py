@@ -1,6 +1,6 @@
+from decimal import Decimal
 from django.db import models
 from django.contrib.auth.models import User
-from utils.models import MoneyField
 from accounts.consts import CURRENCIES
 
 
@@ -11,7 +11,8 @@ class Account(models.Model):
     id = models.CharField(max_length=255, primary_key=True)
     owner = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="accounts")
-    balance = MoneyField()
+    balance = models.DecimalField(
+        max_digits=20, decimal_places=10, default=Decimal(0))
     currency = models.CharField(max_length=3, choices=CURRENCIES)
 
     def __str__(self):

@@ -7,7 +7,7 @@ from accounts.models import Account
 class PaymentSerializer(serializers.Serializer):
     from_account = serializers.CharField(max_length=255)
     to_account = serializers.CharField(max_length=255)
-    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+    amount = serializers.DecimalField(max_digits=20, decimal_places=10)
 
     def validate(self, data):
         """
@@ -63,3 +63,6 @@ class PaymentSerializer(serializers.Serializer):
         to_account.save()
 
         return payment
+
+    def update(self, instance, validated_data):
+        raise serializers.MethodNotAllowed("Update Payment is prohibited")

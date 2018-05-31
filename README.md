@@ -20,8 +20,8 @@ pip install -r requirements.txt
 ```
 4. Create and modify environment-related settings (database, secret_key, etc)
 ```
-cp local_settings.example.py local_settings.py
-vim local_settings.py
+export DATABASE_URL=psql://user:password@127.0.0.1:5432/database
+export SECRET_KEY=verysecret
 ```
 5. Run database migrations
 ```
