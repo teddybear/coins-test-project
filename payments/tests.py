@@ -1,3 +1,4 @@
+from decimal import Decimal
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
@@ -33,15 +34,25 @@ class TestPayments(APITestCase):
         resp = self.client.post(self.url, data=data, format="json")
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         data = resp.data
-        self.assertIn("status", data)
-        self.assertIn("payment_id", data)
-        self.assertEqual(data["status"], "OK")
-        pay_id = data["payment_id"]
-        self.assertTrue(Payment.objects.filter(pk=pay_id).exists())
+        self.assertIn("to_account", data)
+        self.assertIn("amount", data)
+        self.assertIn("direction", data)
+        self.assertIn("account", data)
+        self.assertEqual(data["to_account"], self.bob_account.id)
+        self.assertEqual(data["account"], self.alice_account.id)
+        self.assertEqual(Decimal(data["amount"]), 100)
+        self.assertEqual(data["direction"], "outgoing")
+
         bob = Account.objects.get(pk=self.bob_account.id)
         alice = Account.objects.get(pk=self.alice_account.id)
         self.assertEqual(alice.balance, 900)
         self.assertEqual(bob.balance, 1100)
+
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.data
+        self.assertIn("results", data)
+        self.assertEqual(len(data["results"]), 2)
 
     def test_payment_account_not_exist(self):
         """Test case nonexistant account payment"""

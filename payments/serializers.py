@@ -13,15 +13,16 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         exclude = ("id",)
+        read_only_fields = ("account",)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
         if ret["direction"] == "incoming":
             ret["from_account"] = ret["to_account"]
             del ret["to_account"]
+        else:
+            del ret["from_account"]
         return ret
-
-    def to_internal_value(self, data)
 
     def validate(self, data):
         """

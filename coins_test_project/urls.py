@@ -15,9 +15,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework_swagger.views import get_swagger_view
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
-swagger_schema_view = get_swagger_view(title='Project API Docs')
+swagger_schema_view = get_schema_view(
+    openapi.Info(
+        title="Payments API",
+        default_version='v1',
+        description="Test coins project",
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
 
 api_patterns = [
     path('accounts', include(
@@ -29,5 +40,9 @@ api_patterns = [
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include((api_patterns, "api"), namespace="v1")),
-    path('docs/', swagger_schema_view),
+    path(
+        'docs/',
+        swagger_schema_view.with_ui("swagger"),
+        name="schema-swagger-ui"
+    ),
 ]
