@@ -115,3 +115,22 @@ class TestPayments(APITestCase):
         self.assertEqual(len(resp_data["non_field_errors"]), 1)
         self.assertEqual(
             resp_data["non_field_errors"][0], "Accounts currencies not equal")
+
+    def test_payment_insuff_funds(self):
+        """Test case payment insufficient funds on from_account"""
+        self.alice_account.balance = 0
+        self.alice_account.save()
+        data = {
+            "from_account": self.alice_account.id,
+            "to_account": self.bob_account.id,
+            "amount": 100
+        }
+        resp = self.client.post(self.url, data=data, format="json")
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+        resp_data = resp.data
+        self.assertIn("non_field_errors", resp_data)
+        self.assertEqual(len(resp_data["non_field_errors"]), 1)
+        self.assertEqual(
+            resp_data["non_field_errors"][0],
+            "Insufficient funds on from_account"
+        )

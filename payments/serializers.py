@@ -36,8 +36,9 @@ class PaymentSerializer(serializers.Serializer):
         if from_account.currency != to_account.currency:
             raise serializers.ValidationError("Accounts currencies not equal")
 
-        # data["from_account"] = from_account
-        # data["to_account"] = to_account
+        if from_account.balance < amount:
+            raise serializers.ValidationError(
+                "Insufficient funds on from_account")
 
         return data
 
