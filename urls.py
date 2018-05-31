@@ -28,6 +28,6 @@ api_patterns = [
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/', include(api_patterns)),
+    path('api/v1/', include(api_patterns, namespace="v1")),
     path('docs/', swagger_schema_view),
 ]
