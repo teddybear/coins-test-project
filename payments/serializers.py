@@ -21,6 +21,8 @@ class PaymentSerializer(serializers.ModelSerializer):
             del ret["to_account"]
         return ret
 
+    def to_internal_value(self, data)
+
     def validate(self, data):
         """
         Validate payment before saving
