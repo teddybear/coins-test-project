@@ -33,3 +33,4 @@ class AccountList(ListAPIView):
     permission_classes = (AllowAny,)
     serializer_class = AccountSerializer
     queryset = Account.objects.all()
+    filter_fields = "__all__"

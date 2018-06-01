@@ -8,3 +8,4 @@ class Payments(ListCreateAPIView):
     permission_classes = (AllowAny,)
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
+    filter_fields = "__all__"
